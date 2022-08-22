@@ -1,0 +1,543 @@
+--[[
+ ________      __  __      ____        ____       __  __      ______      __   __     
+/\_____  \    /\ \/\ \    /\  _`\     /\  _`\    /\ \/\ \    /\  _  \    /\ \ /\ \    
+\/____//'/'   \ \ \ \ \   \ \ \L\ \   \ \ \ _    \ \ \_\ \   \ \ \L\ \   \ `\`\/'/'   
+     //'/'     \ \ \ \ \   \ \ ,  /    \ \  _\    \ \  _  \   \ \  __ \   `\/ > <     
+    //'/'___    \ \ \_\ \   \ \ \\ \    \ \ \ __   \ \ \ \ \   \ \ \/\ \     \/'/\`\  
+    /\_______\   \ \_____\   \ \_\ \_\   \ \____/   \ \_\ \_\   \ \_\ \_\    /\_\\ \_\
+    \/_______/    \/_____/    \/_/\/ /    \/___/     \/_/\/_/    \/_/\/_/    \/_/ \/_/
+
+     Reworked by Zurewrath and not all the stuff in this script is exactly made by me
+                      original script credits go to CNF-RDev
+--]]
+
+if game.PlaceId == 292439477 then
+    
+    local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/zurewrath/zurehax/main/phantom-forces")()
+    local win = lib:Window("Zurehax Phantom Forces (Welcome " .. game.Players.LocalPlayer.Name .. ")",Color3.fromRGB(255, 255, 255), Enum.KeyCode.RightControl)
+
+    local rs = game:GetService("RunService")
+    local User = game:GetService("UserInputService") 
+    local GuiService = game:GetService("StarterGui")
+    local mouse = game.Players.LocalPlayer:GetMouse()
+
+    local AbColor = Color3.fromRGB(255, 128, 128)
+    local EspColor = Color3.fromRGB(255, 128, 128)
+    local LineList = {}
+    local TextList = {}
+    local width = 3
+    local height = 5
+
+    local saTargetPart = "Head"
+    local safov = 500
+    local panicMode = false
+    local panicDistance = 5
+    local saWallCheck = false
+    local saWallBangs = 0
+    local gunCF
+    local motor
+    local sa = false
+    local saFovRingList = {}
+    local getsky = false
+    local gfx = false
+    local fullbright = false
+
+    local checkforfolder = isfolder("Zurehax")
+
+    if checkforfolder then else
+        GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Creating System files";})
+        makefolder("Zurehax")
+    end
+
+    local checkforjobid = isfile("Zurehax/jobid.zh")
+    local checkforcheckjobid = isfile("Zurehax/checkjobid.zh")
+    local checkforconnectcheck = isfile("Zurehax/connectcheck.zh")
+    local checkforstartcheck = isfile("Zurehax/startcheck.zh")
+
+    if checkforjobid then else
+        writefile("Zurehax/jobid.zh","")
+    end
+    if checkforcheckjobid then else
+        writefile("Zurehax/checkjobid.zh","")
+    end
+
+    if checkforconnectcheck then else
+        writefile("Zurehax/connectcheck.zh","")
+    end
+
+    if checkforstartcheck then else
+        writefile("Zurehax/startcheck.zh","false")
+    end
+
+    local readconnectcheck = readfile("Zurehax/connectcheck.zh")
+
+    if readconnectcheck == "true" then
+        writefile("Zurehax/connectcheck.zh","false")
+        GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = 'Corrected broken file "Zurehax/connectcheck.zh"';})  
+    end
+
+    local readforcheckjobid = readfile("Zurehax/checkjobid.zh")
+
+    if readforcheckjobid == "true" then
+        writefile("Zurehax/checkjobid.zh","false")
+        GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = 'Corrected broken file "Zurehax/checkjobid.zh"';})  
+    end
+
+    local readstartcheck = readfile("Zurehax/startcheck.zh")
+
+    if readconnectcheck == "true" then
+        writefile("Zurehax/startcheck.zh","false")
+        GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = 'Corrected broken file "Zurehax/startcheck.zh"';})  
+    end
+
+    rs.Stepped:connect(function()
+        if getsky then
+            for i,v in pairs(game.Lighting:GetChildren()) do
+                if v:IsA("Sky") then
+                    v:Destroy()
+                end
+            end
+        end
+    end)
+
+    rs.Stepped:connect(function()
+        if fullbright then
+            game.Lighting.FogEnd = 9999
+            game.Lighting.TimeOfDay = "12:00:00"
+            game.Lighting.Brightness = 2
+            game.Lighting.GlobalShadows = false
+        end
+    end)
+
+    rs.Stepped:connect(function()
+        if gfx then
+            for _,v in pairs(workspace:GetDescendants()) do
+                if v.ClassName == "Part"
+                or v.ClassName == "SpawnLocation"
+                or v.ClassName == "WedgePart"
+                or v.ClassName == "Terrain"
+                or v.ClassName == "MeshPart" then
+                    v.Material = "Plastic"
+                end
+            end
+        end
+    end)
+
+    local function getTeam()
+        local localPlayerGhostsTeamName = "Ghosts" 
+        local playerFolderGhostsTeamName = "Bright orange"
+        local playerFolderPhantomsTeamName = "Bright blue" 
+        if game.Players.LocalPlayer.Team.Name == localPlayerGhostsTeamName then return playerFolderPhantomsTeamName else return playerFolderGhostsTeamName end
+    end
+
+    local function isPointVisible(targetForWallCheck, mw)
+        local castPoints = {targetForWallCheck.PrimaryPart.Position}
+        local ignoreList = {targetForWallCheck, game.Players.LocalPlayer.Character, game.Workspace.CurrentCamera}
+        local result = workspace.CurrentCamera:GetPartsObscuringTarget(castPoints, ignoreList)
+        
+        return #result <= mw
+    end
+
+    local filecheck = isfile("Zurehax PF/zurehaxfov.txt")
+
+    if filecheck then
+        -- GuiService:SetCore("SendNotification", {Title = "[Zurehax]",Text = "UI File already exist";})
+    else
+        writefile("Zurehax PF/zurehaxfov.txt","false")
+        -- GuiService:SetCore("SendNotification", {Title = "[Zurehax]",Text = "UI File has been created";})
+    end
+
+    rs.RenderStepped:Connect(function()
+        for i,v in pairs(saFovRingList) do
+            v:Remove()
+        end
+        
+        saFovRingList = {}
+        if not sa then return end        
+        local FOVring = Drawing.new("Circle")
+        local fovcheck = readfile("Zurehax PF/zurehaxfov.txt")
+        if fovcheck == "false" then
+            FOVring.Visible = false
+
+        end
+        if fovcheck == "true" then
+            FOVring.Visible = true  
+ 
+        end
+        FOVring.Thickness = 2
+        FOVring.Radius = safov / workspace.CurrentCamera.FieldOfView
+        FOVring.Transparency = 1
+        FOVring.Color = AbColor
+        FOVring.Position = game.Workspace.CurrentCamera.ViewportSize/2
+                
+        saFovRingList[#saFovRingList+1] = FOVring
+        
+        local team = getTeam()
+        
+        local targetPos
+        local last = Vector2.new(math.huge, math.huge)
+        if game.Workspace.Players:FindFirstChild(team) then
+            for i,v in pairs(game.Workspace.Players:FindFirstChild(team):GetChildren()) do
+                local pos = v[saTargetPart].Position
+                local ScreenSpacePos, IsOnScreen = game.Workspace.CurrentCamera:WorldToViewportPoint(pos)
+                ScreenSpacePos = Vector2.new(ScreenSpacePos.X, ScreenSpacePos.Y) - game.Workspace.CurrentCamera.ViewportSize/2
+                
+                if (v[saTargetPart].Position - Workspace.CurrentCamera.CFrame.Position).Magnitude <= panicDistance and panicMode then
+                    targetPos = pos
+                    break
+                end
+                        
+                if IsOnScreen and ScreenSpacePos.Magnitude < last.Magnitude and ScreenSpacePos.Magnitude <= (safov / workspace.CurrentCamera.FieldOfView) and (isPointVisible(v, saWallBangs) or not saWallCheck) then
+                    last = ScreenSpacePos
+                    targetPos = pos
+                end
+            end
+        end
+        if targetPos then
+            motor = Workspace.CurrentCamera:GetChildren()[3].Trigger.Motor6D
+            local cf = motor.C0
+                    
+            local cf2 = CFrame.new(motor.Part0.CFrame:ToWorldSpace(cf).Position, targetPos)
+            gunCF = motor.Part0.CFrame:ToObjectSpace(cf2)
+        else
+            gunCF = nil
+            motor = nil
+        end
+    end)
+    local OldIndex
+    OldIndex = hookmetamethod(game, "__newindex", newcclosure(function(...)
+        local Self, Key, Value = ...
+
+        if sa and motor and gunCF and Self == motor and Key == "C0" then
+            return OldIndex(Self, Key, gunCF)
+        end
+
+        return OldIndex(...)
+    end))
+
+    Utility  = win:Tab("Utility")
+
+    Utility:Button("Rejoin Server", function(t)
+        local Tele = game:GetService("TeleportService")
+        local player = game:GetService("Players").LocalPlayer
+        local char = game.Players.LocalPlayer.Character
+        Tele:Teleport(game.PlaceId, player )
+    end)
+
+    Utility:Button("Copy Job ID", function(t)
+        setclipboard(game.JobId)
+    end)
+
+    Utility:Textbox("Join Game",true, function(t)
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, t, game:GetService("Players").LocalPlayer)
+    end)
+
+    Movement = win:Tab("Movement")
+    Movement:Toggle("Fly",false, function(t) 
+        if t == true then
+            t = false
+        else
+            t = true
+        end
+    end)
+
+    Movement:Toggle("Speed",false, function(t) 
+        
+    end)
+
+    Movement:Toggle("Super Jump",false, function(t) 
+        local User = game:GetService("UserInputService")
+        local player = game:GetService("Players").LocalPlayer
+        local GuiService = game:GetService("StarterGui")
+        local mouse = game.Players.LocalPlayer:GetMouse()
+        local holdingSpaceKey = false
+        Speed_2 = -1           
+        game:GetService('RunService').RenderStepped:connect(function()
+            if t then
+                if SpaceHeld == true then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,-Speed_2,0)
+                
+                end
+            end
+        end)
+        User.InputBegan:Connect(function(inputObject) 
+            if(inputObject.KeyCode==Enum.KeyCode.Space) then
+                holdingSpaceKey = true SpaceHeld= true
+            end
+        end)
+        User.InputEnded:Connect(function(inputObject)
+            if(inputObject.KeyCode==Enum.KeyCode.Space) then
+                holdingSpaceKey = false SpaceHeld = false
+            end
+        end)
+    end)
+
+    Blatant = win:Tab("Blatant")
+    Blatant:Toggle("Silent Aim",false, function(t)
+        sa = t
+        if t == true then
+            writefile("Zurehax PF/silentaim.txt","true")
+        else
+            writefile("Zurehax PF/silentaim.txt","false") 
+        end
+    end)
+
+    --SilentAim:Toggle("Fov Ring",readfr, function(t)
+    --    local fovcheck = readfile("Zurehax PF/zurehaxfov.txt")
+    --    if fovcheck == "true" then
+    --        writefile("Zurehax PF/zurehaxfov.txt","false")
+    --    else
+    --        writefile("Zurehax PF/zurehaxfov.txt","true")
+    --    end
+    --    if t == true then writefile("Zurehax PF/fovring.txt","true") else writefile("Zurehax PF/fovring.txt","false") end
+    --end)
+
+    Blatant:Toggle("Wall Check",readwc,  function(t) 
+        saWallCheck = t 
+        if t == true then writefile("Zurehax PF/wallcheck.txt","true") else writefile("Zurehax PF/wallcheck.txt","false") end
+    end)
+
+    --SilentAim:Slider("Max Wallbangs", 0, 50, 1, function(t) 
+    --    saWallBangs = t 
+    --end)
+    Blatant:Slider("Fov", 0, 50000, 500, function(t) 
+        safov = t 
+    end)
+
+    Blatant:Dropdown("Target Part", {"Head", "Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg"}, function(currentOption)
+        saTargetPart = currentOption 
+    end)
+
+    --SilentAim:Toggle("Target Distance Limit",false,  function(t) 
+    --    panicMode = t 
+    --end)
+    --SilentAim:Slider("Target Distance", 40, 5, 0, function(t) 
+    --    panicDistance = t 
+    --end)
+
+    Render = win:Tab("Render")
+    Render:Toggle("Boxes",false, function(t)
+        if t == true then writefile("Zurehax PF/esp.txt","true") else writefile("Zurehax PF/esp.txt","false") end
+        if t then
+            LineList = {}
+            espLoop = rs.RenderStepped:Connect(function()
+                for i,v in pairs(LineList) do
+                    if v then
+                        v:Remove()
+                    end
+                end
+                local team = getTeam()
+                LineList = {}
+                if game.Workspace.Players:FindFirstChild(team) then
+                    for i,v in pairs(game.Workspace.Players:FindFirstChild(team):GetChildren()) do
+                        local pos = v.PrimaryPart.Position
+                        local ScreenSpacePos, IsOnScreen = game.Workspace.CurrentCamera:WorldToViewportPoint(pos)                       
+                        a = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(width/2, height/2, 0)))
+                        b = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(-width/2, height/2, 0)))
+                        c = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(-width/2, -height/2, 0)))
+                        d = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(width/2, -height/2, 0)))
+                        a = Vector2.new(a.X, a.Y)
+                        b = Vector2.new(b.X, b.Y)
+                        c = Vector2.new(c.X, c.Y)
+                        d = Vector2.new(d.X, d.Y)
+                        if IsOnScreen then
+                            local Line = Drawing.new("Quad")
+                            Line.Visible = true
+                            Line.PointA = a
+                            Line.PointB = b
+                            Line.PointC = c
+                            Line.PointD = d
+                            Line.Color = EspColor
+                            Line.Thickness = 2
+                            Line.Transparency = 1
+                            LineList[#LineList+1] = Line
+                        end
+                    end
+                end
+            end)
+        else
+            espLoop:Disconnect()
+            for i,v in pairs(LineList) do
+                v:Remove()
+            end
+            LineList = {}
+        end
+    end)
+
+    Render:Toggle("Nametags",false, function(t)
+        if t then
+            TextList = {}
+            ntLoop = rs.RenderStepped:Connect(function()
+                for i,v in pairs(TextList) do
+                    if v then
+                        v:Remove()
+                    end
+                end
+                local team = getTeam()
+                TextList = {}
+                if game.Workspace.Players:FindFirstChild(team) then
+                    for i,v in pairs(game.Workspace.Players:FindFirstChild(team):GetChildren()) do
+                        local pos = v.PrimaryPart.Position
+                        local ScreenSpacePos, IsOnScreen = game.Workspace.CurrentCamera:WorldToViewportPoint(pos)
+                        a = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(width/2, height/2, 0)))
+                        b = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(-width/2, height/2, 0)))
+                        c = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(-width/2, -height/2, 0)))
+                        d = game.Workspace.CurrentCamera:WorldToViewportPoint(v.Torso.CFrame:PointToWorldSpace(Vector3.new(0, -2, 0)))
+                        a = Vector2.new(a.X, a.Y)
+                        b = Vector2.new(b.X, b.Y)
+                        c = Vector2.new(c.X, c.Y)
+                        d = Vector2.new(d.X, d.Y) 
+                        if IsOnScreen then  
+                            local Line = Drawing.new("Text")
+                            Line.Visible = true
+                            Line.Text = v.Name
+                            Line.Color = EspColor
+                            Line.Transparency = 1
+                            Line.Position = d 
+                            TextList[#TextList+1] = Line
+                        end
+                    end
+                end
+            end)
+        else
+            ntLoop:Disconnect()
+            for i,v in pairs(TextList) do
+                v:Remove()
+            end
+            TextList = {}
+        end
+    end)
+
+    Render:Toggle("Remove Skybox",false, function(t) 
+        if t == true then writefile("Zurehax PF/sky.txt","true") else writefile("Zurehax PF/sky.txt","false") end
+        if t == true then
+            getsky = true
+        else
+            getsky = false
+        end
+    end)
+
+    Render:Toggle("No Shadows",false, function(t)
+        if t == true then writefile("Zurehax PF/shadows.txt","true") else writefile("Zurehax PF/shadows.txt","false") end
+        if t == true then
+            game.Lighting.GlobalShadows = true
+        else
+            game.Lighting.GlobalShadows = false
+        end
+    end)
+
+
+    Render:Toggle("Full Bright",false, function(t) 
+        if t == true then writefile("Zurehax PF/fullbright.txt","true") else writefile("Zurehax PF/fullbright.txt","false") end
+        if t == true then
+            fullbright = true
+        else
+            fullbright = false
+        end
+    end)
+
+    Render:Button("Low GFX", function(t) 
+        for _,v in pairs(workspace:GetDescendants()) do
+            if v.ClassName == "Part"
+            or v.ClassName == "SpawnLocation"
+            or v.ClassName == "WedgePart"
+            or v.ClassName == "Terrain"
+            or v.ClassName == "MeshPart" then
+                v.Material = "Plastic"
+            end
+        end
+    end)
+
+    Botting = win:Tab("Botting")
+
+    Botting:Textbox("Join Job ID",true, function(t)
+        writefile("Zurehax/jobid.zh",tostring(game.JobId))
+        writefile("Zurehax/checkjobid.zh","true")
+        GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Joining Server";})   
+        wait(0.5)
+        writefile("Zurehax/checkjobid.zh","false")
+    end)
+
+    Botting:Toggle("Toggle Bots",false, function(t) 
+        local readstartcheck = readfile("Zurehax/startcheck.zh")
+        local readconnectcheck = readfile("Zurehax/connectcheck.zh")
+        if readconnectcheck == "true" then
+            if readstartcheck == "true" then
+                GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Disabled Bot";})
+                writefile("Zurehax/startcheck.zh","false")
+            else
+                GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Enabled Bot";})
+                writefile("Zurehax/startcheck.zh","true")
+            end
+        else
+            GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Error, bots are not connected";})
+        end
+    end)
+
+    Botting:Toggle("Connect Bots",false, function(t) 
+        local readconnectcheck = readfile("Zurehax/connectcheck.zh")
+        if readconnectcheck == "true" then
+            GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Disconnecting to Clients";})
+            writefile("Zurehax/connectcheck.zh","false")
+        else
+            GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Connecting to Clients";})
+            writefile("Zurehax/connectcheck.zh","true")
+        end
+    end)
+
+
+    Setting = win:Tab("Settings")
+        Binds:Bind("Toggle UI", Enum.KeyCode.RightControl, function(t)
+    end)
+
+    Setting:Colorpicker("Fov Color",Color3.fromRGB(255, 255, 255), function(t)
+        AbColor = t
+    end)
+
+    Setting:Colorpicker("Esp Color", Color3.fromRGB(255,0,0), function(t)
+        EspColor = t
+    end)
+
+    Setting:Bind("Toggle ESP", Enum.KeyCode.J, function(t)
+        print(t)
+    end)
+
+    Setting:Bind("Toggle Silent Aim", Enum.KeyCode.K, function(t)
+        sa = t
+    end)
+
+    Setting:Bind("Toggle Fly", Enum.KeyCode.N, function(t)
+        if check  == true then
+            check = false
+            if notify then
+                GuiService:SetCore("SendNotification", {Title = "Zurehax", Text = "Speed is now disabled";})
+            end
+            game.Workspace.fly:Destroy()
+        else
+            check = true
+            if notify then
+                GuiService:SetCore("SendNotification", {Title = "Zurehax", Text = "Speed is now enabled";})
+            end
+            if flypart then
+                local brick = Instance.new("Part", workspace)
+                brick.Size = Vector3.new(8, 2, 8)
+                brick.CFrame = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, -4, 0)
+                brick.Transparency = 1 brick.Anchored = true brick.Name = "fly"
+                game:GetService('RunService').Stepped:connect(function()
+                    brick.CFrame = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, -4, 0)
+                    brick.Size = Vector3.new(8+-speed, 2, 8+-speed)
+                end)
+            end
+        end
+    end)
+
+    Setting:Bind("Increase Speed", Enum.KeyCode.Equals, function(t)
+        speed = speed + -0.1
+        GuiService:SetCore("SendNotification", {Title = "Zurehax", Text = "Speed is now set to " .. speed;})
+    end)
+
+    Setting:Bind("Descrease Speed", Enum.KeyCode.Minus, function(t)
+        speed = speed - -0.1
+        GuiService:SetCore("SendNotification", {Title = "Zurehax", Text = "Speed is now set to " .. speed;})
+    end)
+end
