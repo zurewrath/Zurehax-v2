@@ -1,6 +1,6 @@
 repeat task.wait() until game:IsLoaded() == true
 
-if game:GetService("Players").LocalPlayer.Name == _g.user then else
+if game:GetService("Players").LocalPlayer.Name == _G.user then else
 	game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui:WaitForChild("MenuScreenGui")
 	wait(10)
 	game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui.MenuScreenGui.Pages.PageMainMenu.ContainerMenu.ButtonMain.Design.TextFrame.Parent.Parent.Parent = game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui.MenuScreenGui
