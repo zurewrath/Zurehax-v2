@@ -3,7 +3,7 @@ local checkforfile = isfile("Zurehax/username.zh")
 if checkforfile then else
 writefile("Zurehax/username.zh","")
 end
-local user = readfile("Zurehax/username.zh
+local user = readfile("Zurehax/username.zh")
 if game:GetService("Players").LocalPlayer.Name == user then else
 	game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui:WaitForChild("MenuScreenGui")
 	wait(10)
