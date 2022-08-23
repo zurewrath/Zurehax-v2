@@ -36,7 +36,7 @@ if game:GetService("Players").LocalPlayer.Name == username then else
 	label.Visible = true
 	
 	RunService.RenderStepped:Connect(function()
-		local checkforconnectcheck = readfile("dawn/connectcheck.dawn") 
+		local checkforconnectcheck = readfile("Zurehax/connectcheck.zh") 
 		if checkforconnectcheck == "true" then
 			label.TextColor3 = Color3.new(0, 1, 0)
 			label.Text = "Connected"
@@ -45,13 +45,13 @@ if game:GetService("Players").LocalPlayer.Name == username then else
 			label.Text = "Disconnected"
 		end
 
-		local checkforcheckjobid = readfile("dawn/checkjobid.dawn")
-		local checkforjobid = readfile("dawn/jobid.dawn")
+		local checkforcheckjobid = readfile("Zurehax/checkjobid.zh")
+		local checkforjobid = readfile("Zurehax/jobid.zh")
 		if checkforcheckjobid == "true" then
 			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId,checkforjobid)
 		end
 
-		local checkforstartcheck = readfile("dawn/startcheck.dawn")
+		local checkforstartcheck = readfile("Zurehax/startcheck.zh")
 		if checkforstartcheck == "true" then
 			Virtual:SendMouseButtonEvent(0,0,0,true,game,0)
 			wait()
