@@ -48,9 +48,9 @@ if game.PlaceId == 292439477 then
         makefolder("Zurehax")
     end
     
-    local checkforfile = isfile("Zurehax/username.zh")
+    local checkforfile = isfile("Zurehax/username.txt")
     if checkforfile then else
-        writefile("Zurehax/username.zh",game.Players.LocalPlayer.Name)
+        writefile("Zurehax/username.txt",game.Players.LocalPlayer.Name)
     end
 
     local checkforjobid = isfile("Zurehax/jobid.zh")
