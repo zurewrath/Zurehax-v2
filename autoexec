@@ -1,84 +1,86 @@
 repeat task.wait() until game:IsLoaded() == true
-local checkforfile = isfile("Zurehax/username.zh")
-if checkforfile then else
-writefile("Zurehax/username.zh","")
-end
-local username = readfile("Zurehax/username.zh")
-if game:GetService("Players").LocalPlayer.Name == username then else
-	game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui:WaitForChild("MenuScreenGui")
-	wait(10)
-	game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui.MenuScreenGui.Pages.PageMainMenu.ContainerMenu.ButtonMain.Design.TextFrame.Parent.Parent.Parent = game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui.MenuScreenGui
-	local Virtual = game:GetService("VirtualInputManager")
-	local Virtual2 = game:GetService("VirtualUser")
-	local RunService = game:GetService("RunService")
-	local Lighting = game:GetService("Lighting")
-	local dawn = Instance.new("ScreenGui")
-	local label = Instance.new("TextLabel")
+if game.PlaceId == 292439477 then
+    local checkforfile = isfile("Zurehax/username.zh")
+    if checkforfile then else
+        
+    end
+    local username = readfile("Zurehax/username.zh")
+    if game:GetService("Players").LocalPlayer.Name == username then else
+        game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui:WaitForChild("MenuScreenGui")
+        wait(10)
+        game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui.MenuScreenGui.Pages.PageMainMenu.ContainerMenu.ButtonMain.Design.TextFrame.Parent.Parent.Parent = game:GetService("Players")[tostring(game.Players.LocalPlayer)].PlayerGui.MenuScreenGui
+        local Virtual = game:GetService("VirtualInputManager")
+        local Virtual2 = game:GetService("VirtualUser")
+        local RunService = game:GetService("RunService")
+        local Lighting = game:GetService("Lighting")
+        local dawn = Instance.new("ScreenGui")
+        local label = Instance.new("TextLabel")
 
-	settings().Rendering.QualityLevel = 1
-	setfpscap(5)
+        settings().Rendering.QualityLevel = 1
+        setfpscap(5)
 
-	dawn.Name = "dawn"
-	dawn.Parent = game.CoreGui
-	dawn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        dawn.Name = "dawn"
+        dawn.Parent = game.CoreGui
+        dawn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-	label.Name = "label"
-	label.Parent = dawn
-	label.AnchorPoint = Vector2.new(1, 1)
-	label.BackgroundColor3 = Color3.new(1, 1, 1)
-	label.BackgroundTransparency = 1
-	label.Position = UDim2.new(1.00895345, 0, 0.976712704, 0)
-	label.Size = UDim2.new(0, 270, 0, 38)
-	label.Font = Enum.Font.SourceSans
-	label.Text = "Disconnected"
-	label.TextColor3 = Color3.new(1, 0, 0.0156863)
-	label.TextSize = 40
-	label.Visible = true
-	
-	RunService.RenderStepped:Connect(function()
-		local checkforconnectcheck = readfile("Zurehax/connectcheck.zh") 
-		if checkforconnectcheck == "true" then
-			label.TextColor3 = Color3.new(0, 1, 0)
-			label.Text = "Connected"
-		else
-			label.TextColor3 = Color3.new(1, 0, 0.0156863)
-			label.Text = "Disconnected"
-		end
+        label.Name = "label"
+        label.Parent = dawn
+        label.AnchorPoint = Vector2.new(1, 1)
+        label.BackgroundColor3 = Color3.new(1, 1, 1)
+        label.BackgroundTransparency = 1
+        label.Position = UDim2.new(1.00895345, 0, 0.976712704, 0)
+        label.Size = UDim2.new(0, 270, 0, 38)
+        label.Font = Enum.Font.SourceSans
+        label.Text = "Disconnected"
+        label.TextColor3 = Color3.new(1, 0, 0.0156863)
+        label.TextSize = 40
+        label.Visible = true
+        
+        RunService.RenderStepped:Connect(function()
+            local checkforconnectcheck = readfile("Zurehax/connectcheck.zh") 
+            if checkforconnectcheck == "true" then
+                label.TextColor3 = Color3.new(0, 1, 0)
+                label.Text = "Connected"
+            else
+                label.TextColor3 = Color3.new(1, 0, 0.0156863)
+                label.Text = "Disconnected"
+            end
 
-		local checkforcheckjobid = readfile("Zurehax/checkjobid.zh")
-		local checkforjobid = readfile("Zurehax/jobid.zh")
-		if checkforcheckjobid == "true" then
-			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId,checkforjobid)
-		end
+            local checkforcheckjobid = readfile("Zurehax/checkjobid.zh")
+            local checkforjobid = readfile("Zurehax/jobid.zh")
+            if checkforcheckjobid == "true" then
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId,checkforjobid)
+            end
 
-		local checkforstartcheck = readfile("Zurehax/startcheck.zh")
-		if checkforstartcheck == "true" then
-			Virtual:SendMouseButtonEvent(0,0,0,true,game,0)
-			wait()
-			Virtual:SendMouseButtonEvent(0,0,0,false,game,0)
-		else
-			Virtual:SendMouseButtonEvent(0,0,0,false,game,0)
-		end	
-	end)
+            local checkforstartcheck = readfile("Zurehax/startcheck.zh")
+            if checkforstartcheck == "true" then
+                Virtual:SendMouseButtonEvent(0,0,0,true,game,0)
+                wait()
+                Virtual:SendMouseButtonEvent(0,0,0,false,game,0)
+            else
+                Virtual:SendMouseButtonEvent(0,0,0,false,game,0)
+            end	
+        end)
 
-	RunService.RenderStepped:Connect(function()
-		if game.Workspace:FindFirstChild("Map") then
-			if game.Workspace.Map:FindFirstChild("Spawns") then
-				for i,v in pairs(game.Workspace.Map.Spawns:GetDescendants()) do
-					if v.Name == "Spawn" then
-						v.CanCollide = true
-					end
-				end
-			end
-			if game.Workspace.Map:FindFirstChild("Map") then
-				if game.Workspace:FindFirstChild("Players") then
-					for i,v in pairs(game.Workspace.Players:GetDescendants()) do
-						v:Destroy()
-					end
-				end
-				game.Workspace.Map.Map:Destroy()
-			end
-		end
-	end)
+        RunService.RenderStepped:Connect(function()
+            if game.Workspace:FindFirstChild("Map") then
+                if game.Workspace.Map:FindFirstChild("Spawns") then
+                    for i,v in pairs(game.Workspace.Map.Spawns:GetDescendants()) do
+                        if v.Name == "Spawn" then
+                            v.CanCollide = true
+                        end
+                    end
+                end
+                if game.Workspace.Map:FindFirstChild("Map") then
+                    if game.Workspace:FindFirstChild("Players") then
+                        for i,v in pairs(game.Workspace.Players:GetDescendants()) do
+                            v:Destroy()
+                        end
+                    end
+                    game.Workspace.Map.Map:Destroy()
+                end
+            end
+        end)
+    end
 end
 
