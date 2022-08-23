@@ -17,7 +17,7 @@ if game.PlaceId == 292439477 then
         local label = Instance.new("TextLabel")
 
         settings().Rendering.QualityLevel = 1
-        setfpscap(5)
+        setfpscap(3)
 
         dawn.Name = "dawn"
         dawn.Parent = game.CoreGui
