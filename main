@@ -48,6 +48,11 @@ if game.PlaceId == 292439477 then
         GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = "Creating System files";})
         makefolder("Zurehax")
     end
+    
+    local checkforfile = isfile("Zurehax/username.zh")
+    if checkforfile then else
+        writefile("Zurehax/username.zh","")
+    end
 
     local checkforjobid = isfile("Zurehax/jobid.zh")
     local checkforcheckjobid = isfile("Zurehax/checkjobid.zh")
