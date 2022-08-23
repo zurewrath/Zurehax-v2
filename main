@@ -58,6 +58,11 @@ if game.PlaceId == 292439477 then
     local checkforcheckjobid = isfile("Zurehax/checkjobid.zh")
     local checkforconnectcheck = isfile("Zurehax/connectcheck.zh")
     local checkforstartcheck = isfile("Zurehax/startcheck.zh")
+    local checkforfovcheck = isfile("Zurehax/fovcheck.zh")
+
+    if checkforfovcheck then else
+        writefile("Zurehax/fovcheck.zh","false")
+    end
 
     if checkforjobid then else
         writefile("Zurehax/jobid.zh","")
@@ -94,6 +99,14 @@ if game.PlaceId == 292439477 then
         writefile("Zurehax/startcheck.zh","false")
         GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = 'Corrected broken file "Zurehax/startcheck.zh"';})  
     end
+
+    local readfovcheck = readfile("Zurehax/fovcheck.zh")
+
+    if readfovcheck == "true" then
+        writefile("Zurehax/fovcheck.zh","false")
+        GuiService:SetCore("SendNotification", {Title = "Zurehax",Text = 'Corrected broken file "Zurehax/fovcheck.zh"';})  
+    end
+
 
     rs.Stepped:connect(function()
         if getsky then
@@ -160,14 +173,11 @@ if game.PlaceId == 292439477 then
         saFovRingList = {}
         if not sa then return end        
         local FOVring = Drawing.new("Circle")
-        local fovcheck = readfile("Zurehax PF/zurehaxfov.txt")
-        if fovcheck == "false" then
+        if readfovcheck == "false" then
             FOVring.Visible = false
-
         end
-        if fovcheck == "true" then
+        if readfovcheck == "true" then
             FOVring.Visible = true  
- 
         end
         FOVring.Thickness = 2
         FOVring.Radius = safov / workspace.CurrentCamera.FieldOfView
@@ -287,15 +297,13 @@ if game.PlaceId == 292439477 then
         end
     end)
 
-    --SilentAim:Toggle("Fov Ring",readfr, function(t)
-    --    local fovcheck = readfile("Zurehax PF/zurehaxfov.txt")
-    --    if fovcheck == "true" then
-    --        writefile("Zurehax PF/zurehaxfov.txt","false")
-    --    else
-    --        writefile("Zurehax PF/zurehaxfov.txt","true")
-    --    end
-    --    if t == true then writefile("Zurehax PF/fovring.txt","true") else writefile("Zurehax PF/fovring.txt","false") end
-    --end)
+    Blatant:Toggle("Show Fov",false, function(t)
+        if fovcheck == "true" then
+            writefile("Zurehax/fovcheck.txt","false")
+        else
+            writefile("Zurehax/fovcheck.txt","true")
+        end
+    end)
 
     Blatant:Toggle("Wall Check",readwc,  function(t) 
         saWallCheck = t 
