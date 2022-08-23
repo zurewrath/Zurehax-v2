@@ -499,7 +499,7 @@ if game.PlaceId == 292439477 then
 
 
     Setting = win:Tab("Settings")
-        Binds:Bind("Toggle UI", Enum.KeyCode.RightControl, function(t)
+        Setting:Bind("Toggle UI", Enum.KeyCode.RightControl, function(t)
     end)
 
     Setting:Colorpicker("Fov Color",Color3.fromRGB(255, 255, 255), function(t)
