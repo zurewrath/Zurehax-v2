@@ -12,7 +12,6 @@
 --]]
 
 if game.PlaceId == 292439477 then
-    
     local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/zurewrath/zurehax/main/phantom-forces")()
     local win = lib:Window("Zurehax Phantom Forces (Welcome " .. game.Players.LocalPlayer.Name .. ")",Color3.fromRGB(255, 255, 255), Enum.KeyCode.RightControl)
 
@@ -51,7 +50,7 @@ if game.PlaceId == 292439477 then
     
     local checkforfile = isfile("Zurehax/username.zh")
     if checkforfile then else
-        writefile("Zurehax/username.zh","")
+        writefile("Zurehax/username.zh",game.Players.LocalPlayer.Name)
     end
 
     local checkforjobid = isfile("Zurehax/jobid.zh")
