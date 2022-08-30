@@ -470,6 +470,10 @@ if game.PlaceId == 292439477 then
         writefile("Zurehax/checkjobid.zh","false")
     end)
 
+    Botting:Button("Copy Job ID", function(t)
+        setclipboard(game.JobId)
+    end)
+
     Botting:Toggle("Toggle Bots",false, function(t) 
         local readstartcheck = readfile("Zurehax/startcheck.zh")
         local readconnectcheck = readfile("Zurehax/connectcheck.zh")
